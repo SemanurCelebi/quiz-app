@@ -1,15 +1,11 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-// Key store: prefer VUE_APP_QUIZAPI_KEY (set in .env) and fall back to the
-// existing mock endpoint for local/dev convenience.
 export const useKeyStore = defineStore('keyStore', {
     state: () => ({
         key: null,
     }),
     actions: {
-        // Ensure we have a key. First try env var (VUE CLI convention), then
-        // fall back to the mock API used previously.
         async getKey() {
             if (this.key) return this.key;
 
