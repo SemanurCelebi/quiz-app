@@ -26,15 +26,25 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useRouter } from 'vue-router';
 
 import { useQuestionsStore } from '@/stores/questions';
 
 const questionStore = useQuestionsStore();
+const router = useRouter();
 
 // These are arrays populated by Questions.vue into the store
 const questions = questionStore.selectedQuestions;
 const userAnswers = questionStore.userAnswers;
+
+onMounted(() => {
+	// No in-progress quiz to show results for (fresh load, refresh, direct
+	// link) - send the user back instead of stranding them on the loader.
+	if (questions.length === 0 || userAnswers.length === 0) {
+		router.replace({ name: 'categories' });
+	}
+});
 
 const correctCount = computed(() => {
 	return questions.filter((question, index) => isCorrect(index)).length;
