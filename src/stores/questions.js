@@ -6,10 +6,24 @@ import { useKeyStore } from './authentication'
 export const useQuestionsStore = defineStore('questionsStore', {
     state: () => ({
         questions: [],
+        categories: [],
         selectedQuestions: [],
         userAnswers: []
     }),
     actions: {
+        async getCategories() {
+            try {
+                const response = await axios.get('https://quizapi.io/api/v1/categories');
+                const groups = response.data && response.data.data ? response.data.data : [];
+                const names = groups.flatMap(group => (group.categories || []).map(category => category.name));
+                this.categories = [...new Set(names)].sort();
+                return this.categories;
+            } catch (error) {
+                console.error('Error fetching categories:', error.response ? error.response.data : error.message);
+                throw error;
+            }
+        },
+
         setSelectedQuestions(questions) {
             this.selectedQuestions = questions;
         },
